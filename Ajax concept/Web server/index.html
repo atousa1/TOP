@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+</head>
+
+<body>
+
+<div id="main">
+  <h2>Have Fun with AJAX - File</h2>
+  <button type="button" onclick="loadDoc('data.json', docFunction)">Get JSON file</button>
+</div>
+
+<div id="users">
+    <h2>Have Fun with AJAX - call API</h2>
+    <button type="button" onclick="callAPI('users')">Users</button>
+</div>
+
+<div id="user">
+    <h2>Have Fun with AJAX - call API</h2>
+    <button type="button" onclick="callAPI('user')">User</button>
+</div>
+
+<script>
+function loadDoc(url, cFunction) {
+  var xhttp;
+  xhttp=new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) 
+    {
+      cFunction(this);
+    }
+  };
+  xhttp.open("GET", url, true);
+  xhttp.send();
+}
+
+function callAPI(api) {
+  var xhttp;
+  var id;
+  id = api;
+  xhttp=new XMLHttpRequest();
+  xhttp.onreadystatechange = function() 
+  {
+    if (this.readyState == 4 && this.status == 200) 
+    {
+      apiFunction(this, id);
+    }
+  };
+  var url = "http://localhost:8080/"+api;
+
+  if (api == "users") 
+  {
+    xhttp.open("GET", url, true);
+  }
+  else if (api == "user")
+  {
+    xhttp.open("POST", url, true);
+  }
+  xhttp.send();
+}
+
+function apiFunction(xhttp, id) 
+{
+  document.getElementById(id).innerHTML = xhttp.responseText;
+    // document.getElementById(id).innerHTML = "<html><head></head><body><h1>Get ALL Users</h1></body></html>";
+
+}
+
+function docFunction(xhttp) 
+{
+    // var arr = JSON.parse('{"result":true, "count":42}');
+    var arr = xhttp.responseText;
+    var out = "";
+    var i;
+    // for(i = 0; i < arr.length; i++) 
+    // {
+        // out += '<a href="' + arr[i].url + '">' + arr[i].display + '</a><br>';
+    out += '<h1>'+arr+'</h1>';
+    // }
+    document.getElementById("main").innerHTML = out
+}
+
+
+</script>
+
+</body>
+</html>
