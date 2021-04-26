@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+
+<body>
+
+<style>
+header {
+  background-color: rgb(38, 60, 255);
+  padding: 30px;
+  text-align: center;
+  font-size: 35px;
+  color: white;
+}
+
+nav {
+  float: left;
+  width: 22%;
+  text-align: center;
+  background: rgb(155, 194, 209);
+  padding: 20px;
+}
+</style>
+
+<header>
+  <h2>This is how AJAX works</h2>
+</header>
+
+<nav>
+  <div id="main">
+    <h2>Show JSON File:</h2>
+    <button type="button" onclick="loadDoc('data.json', docFunction)">GET IT!</button>
+  </div>
+</nav>
+
+<nav>
+<div id="users">
+    <h2>Export All Users</h2>
+    <button type="button" onclick="callAPI('users', 0)">GET IT!</button>
+</div>
+</nav>
+
+<nav>
+  <div id="user_id">
+      <h2>Export Specific User</h2>
+      <form name = "id_form" method="GET">
+        <input type="text" name="uid">
+        <button type="button" onclick="callAPI('user_id', 1)">GET IT!</button>
+      </form>
+  </div>
+</nav>
+
+<nav>
+<div id="user">
+    <h2>Import User</h2>
+    <button type="button" onclick="callAPI('user', 0)">ADD IT!</button>
+</div>
+</nav>
+
+<script>
+window.onload=function(){
+  document.addEventListener('DOMContentLoaded', function () {
+    const form = document.getElementById('user_id').querySelector('id_form');
+        form.addEventListener('button', function(event) 
+        {
+            event.preventDefault();
+
+            var usid = form.querySelector("input[name = 'uid']");
+        });
+      });
+};
+function loadDoc(url, cFunction) {
+  var xhttp;
+  xhttp=new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) 
+    {
+      cFunction(this);
+    }
+  };
+  xhttp.open("GET", url, true);
+  xhttp.send();
+}
+
+function callAPI(api, user_flag) {
+  var xhttp;
+  var id;
+  id = api;
+  xhttp=new XMLHttpRequest();
+  xhttp.onreadystatechange = function() 
+  {
+    if (this.readyState == 4 && this.status == 200) 
+    {
+      apiFunction(this, id);
+    }
+  };
+  
+  if (user_flag)
+  {
+    var url = "http://localhost:7070/user/"+1;
+  }
+  else
+  {
+    var url = "http://localhost:7070/"+api;
+  }
+  
+
+  // if (api == "users") 
+  // {
+  //   xhttp.open("GET", url, true);
+  // }
+  if (api == "user")
+  {
+    xhttp.open("POST", url, true);
+  }
+  else
+  {
+    xhttp.open("GET", url, true);
+  }
+  xhttp.send();
+}
+
+function apiFunction(xhttp, id) 
+{
+  console.log(xhttp);
+  document.getElementById(id).innerHTML = xhttp.responseText;
+    // document.getElementById(id).innerHTML = "<html><head></head><body><h1>Get ALL Users</h1></body></html>";
+
+}
+
+function docFunction(xhttp) 
+{
+    // var arr = JSON.parse('{"result":true, "count":42}');
+    var arr = xhttp.responseText;
+    var out = "";
+    var i;
+    // for(i = 0; i < arr.length; i++) 
+    // {
+        // out += '<a href="' + arr[i].url + '">' + arr[i].display + '</a><br>';
+    out += '<h1>'+arr+'</h1>';
+    // }
+    document.getElementById("main").innerHTML = out
+}
+
+
+</script>
+
+</body>
+</html>
