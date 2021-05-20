@@ -18,9 +18,9 @@ class AtousaHttpRequestHandler(http.server.SimpleHTTPRequestHandler):
 
         return
 
-handler_object = AtousaHttpRequestHandler
+handler = AtousaHttpRequestHandler
 
 PORT = 9090
-my_server = socketserver.TCPServer(("", PORT), handler_object)
+my_server = socketserver.TCPServer(("", PORT), handler)
 
 my_server.serve_forever()
