@@ -1,6 +1,7 @@
 import http.server
 import socketserver
 import re
+import os
 
 class AtousaHttpRequestHandler(http.server.SimpleHTTPRequestHandler):
 
@@ -9,17 +10,19 @@ class AtousaHttpRequestHandler(http.server.SimpleHTTPRequestHandler):
         self.send_response(200)
 
         self.send_header("Content-type", "text/html")
-        # self.send_header('location', 'index.html')  
+        
         self.end_headers()
 
-        with open('index.html', 'rb') as fin:
+        htmlFilePath = os.getcwd() + "/webserver_html_simple/index.html"
+
+        with open(htmlFilePath, 'rb') as fin:
             self.copyfile(fin, self.wfile)
 
         return
 
-handler_object = AtousaHttpRequestHandler
+handler = AtousaHttpRequestHandler
 
-PORT = 7070
-my_server = socketserver.TCPServer(("", PORT), handler_object)
+PORT = 9091
+my_server = socketserver.TCPServer(("", PORT), handler)
 
 my_server.serve_forever()
