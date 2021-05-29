@@ -21,15 +21,9 @@ class AtousaHttpRequestHandler(http.server.SimpleHTTPRequestHandler):
         self.end_headers()
 
         target = self.path
-        print(target)
         pattern = r'^/user/\d+$'
-
-        form = cgi.FieldStorage()
-        if target == '/user/':
-            id_num = form.getvalue("uid")
-            target = '/user/%s' %id_num
         
-        filepath = os.getcwd() + "/files/data.json"
+        filepath = os.getcwd() + "/ajax_submission/api/files/data.json"
 
         if target == '/users':
             
@@ -86,7 +80,7 @@ def file_presenter(filename):
 
 handler_object = AtousaHttpRequestHandler
 
-PORT = 7070
+PORT = 7072
 my_server = socketserver.TCPServer(("", PORT), handler_object)
 
 my_server.serve_forever()

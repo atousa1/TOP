@@ -28,31 +28,24 @@ nav {
 </header>
 
 <nav>
-  <div id="main">
-    <h2>Show JSON File:</h2>
-    <button type="button" onclick="loadDoc('data.json', docFunction)">GET IT!</button>
-  </div>
-</nav>
-
-<nav>
-<div id="users">
+<div>
     <h2>Export All Users</h2>
-    <button type="button" onclick="callAPI('users', 0)">GET IT!</button>
+    <button type="button" onclick="getUsers()">GET IT!</button>
+    <div id="users"></div>
 </div>
 </nav>
 
 <nav>
   <div id="user_id">
       <h2>Export Specific User</h2>
-      <form name = "id_form" method="GET">
-        <input type="text" name="uid">
-        <button type="button" onclick="callAPI('user_id', 1)">GET IT!</button>
-      </form>
+      <input type="text" id="userIdInput">
+      <button type="button" onclick="getUser()">GET IT!</button>
+      <div id="user"></div>
   </div>
 </nav>
 
 <nav>
-<div id="user">
+<div>
     <h2>Import User</h2>
     <button type="button" onclick="callAPI('user', 0)">ADD IT!</button>
 </div>
@@ -98,11 +91,11 @@ function callAPI(api, user_flag) {
   
   if (user_flag)
   {
-    var url = "http://localhost:7070/user/"+1;
+    var url = "http://localhost:7072/user/"+1;
   }
   else
   {
-    var url = "http://localhost:7070/"+api;
+    var url = "http://localhost:7072/"+api;
   }
   
 
@@ -141,6 +134,33 @@ function docFunction(xhttp)
     out += '<h1>'+arr+'</h1>';
     // }
     document.getElementById("main").innerHTML = out
+}
+
+function getUsers() {
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() 
+  {
+    if (this.readyState == 4 && this.status == 200) 
+    {
+      document.getElementById("users").innerHTML = xhttp.responseText;
+    }
+  };
+  xhttp.open("GET", 'http://localhost:7072/users', true);
+  xhttp.send();
+}
+
+function getUser() {
+  var userID = document.getElementById('userIdInput').value;
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() 
+  {
+    if (this.readyState == 4 && this.status == 200) 
+    {
+      document.getElementById("user").innerHTML = xhttp.responseText;
+    }
+  };
+  xhttp.open("GET", 'http://localhost:7072/user/' + userID, true);
+  xhttp.send();
 }
 
 
