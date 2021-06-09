@@ -14,7 +14,7 @@ class AtousaHttpRequestHandler(http.server.SimpleHTTPRequestHandler):
     def do_GET(self):
 
         self.send_response(200)
-
+        self
         self.send_header("Content-type", "text/html")
         self.send_header("Access-Control-Allow-Origin", "*")
 
@@ -58,6 +58,10 @@ class AtousaHttpRequestHandler(http.server.SimpleHTTPRequestHandler):
         self.send_response(200)
 
         self.send_header("Content-type", "text/html")
+        self.send_header("Access-Control-Allow-Origin", "*")
+
+        a = self.rfile.read(int(self.headers['Content-Length']))
+        print(a.__str__())
 
         self.end_headers()
 
