@@ -185,8 +185,8 @@ function addUser() {
       document.getElementById("user").innerHTML = xhttp.responseText;
     }
   };
-  xhttp.open("POST", 'http://localhost:7072', true);
-  xhttp.send("{\"ID\": " + userId + ",\"Name\": " + userName + ",\"Age\": " + userAge + ",\"City\": " + userCity + "}");
+  xhttp.open("POST", 'http://localhost:7072/user', true);
+  xhttp.send("{\"ID\": " + userId + ",\"Name\": " + "\""+userName+"\"" + ",\"Age\": " + userAge + ",\"City\": " + "\""+userCity+"\"" + "}");
 }
 
 

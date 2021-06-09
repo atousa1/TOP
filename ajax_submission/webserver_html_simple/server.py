@@ -2,6 +2,7 @@ import http.server
 import socketserver
 import re
 import os
+from sys import platform
 
 class AtousaHttpRequestHandler(http.server.SimpleHTTPRequestHandler):
 
@@ -13,7 +14,11 @@ class AtousaHttpRequestHandler(http.server.SimpleHTTPRequestHandler):
         
         self.end_headers()
 
-        htmlFilePath = os.getcwd() + "/ajax_submission/webserver_html_simple/index.html"
+        
+        if platform.startswith("linux"):
+            htmlFilePath = os.getcwd() + "/ajax_submission/webserver_html_simple/index.html"
+        elif platform.startswith("win32"):
+            htmlFilePath = os.getcwd() + "/index.html"
 
         with open(htmlFilePath, 'rb') as fin:
             self.copyfile(fin, self.wfile)

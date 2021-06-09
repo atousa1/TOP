@@ -6,6 +6,7 @@ import json
 import cgitb
 import cgi
 import cgitb
+from sys import platform
 cgitb.enable()
 
 
@@ -23,7 +24,10 @@ class AtousaHttpRequestHandler(http.server.SimpleHTTPRequestHandler):
         target = self.path
         pattern = r'^/user/\d+$'
         
-        filepath = os.getcwd() + "/ajax_submission/api/files/data.json"
+        if platform.startswith("linux"):
+            filepath = os.getcwd() + "/ajax_submission/api/files/data.json"
+        elif platform.startswith("win32"):
+            filepath = os.getcwd() + "/files/data.json"
 
         if target == '/users':
             
@@ -48,7 +52,7 @@ class AtousaHttpRequestHandler(http.server.SimpleHTTPRequestHandler):
             return
         else:
 
-            html = "Atousa does not know what to do with your GET request :) and target:{}" .format(form)
+            html = "Atousa does not know what to do with your GET request :)"
             self.wfile.write(bytes(html, "utf8"))
             return
   
@@ -60,16 +64,39 @@ class AtousaHttpRequestHandler(http.server.SimpleHTTPRequestHandler):
         self.send_header("Content-type", "text/html")
         self.send_header("Access-Control-Allow-Origin", "*")
 
-        a = self.rfile.read(int(self.headers['Content-Length']))
-        print(a.__str__())
+        data_byte = self.rfile.read(int(self.headers['Content-Length']))
 
         self.end_headers()
 
+        data_str = data_byte.decode("utf-8")
+        data_dict = json.loads(data_str)
+        
+        
         target = self.path
 
         if target == '/user':
 
-            html = f"<html><head></head><body><h1>Create User</h1></body></html>"
+            new_user = {}
+            new_user_data = {}
+            for key in data_dict.keys():
+                if key in ['Name', 'Age', 'City']:
+                    new_user_data[key] = data_dict[key]
+            new_user[str(data_dict['ID'])] = new_user_data
+
+            if platform.startswith("linux"):
+                jsonFilePath = os.getcwd() + "/ajax_submission/api/files/data.json"
+            elif platform.startswith("win32"):
+                jsonFilePath = os.getcwd() + "/files/data.json"
+
+            with open(jsonFilePath, 'r+') as jsonSrc_str:
+
+                jsonSrc = json.load(jsonSrc_str)
+                jsonSrc.update(new_user)
+                jsonSrc_str.seek(0)
+                json.dump(jsonSrc, jsonSrc_str, indent=4)
+
+            dispMsg = "User {} is Added to database.".format(new_user_data['Name'])
+            self.wfile.write(bytes(dispMsg, "utf8"))
 
         else:
 
