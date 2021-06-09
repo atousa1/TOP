@@ -47,7 +47,16 @@ nav {
 <nav>
 <div>
     <h2>Import User</h2>
-    <button type="button" onclick="callAPI('user', 0)">ADD IT!</button>
+    <h2>ID</h2>
+    <input type="text" id="userIdTextInput">
+    <h2>Age</h2>
+    <input type="text" id="userAgeTextInput">
+    <h2>Name</h2>
+    <input type="text" id="userNameTextInput">
+    <h2>City</h2>
+    <input type="text" id="userCityTextInput">
+    <br />
+    <button type="button" onclick="addUser()">ADD IT!</button>
 </div>
 </nav>
 
@@ -161,6 +170,23 @@ function getUser() {
   };
   xhttp.open("GET", 'http://localhost:7072/user/' + userID, true);
   xhttp.send();
+}
+
+function addUser() {
+  var userId = document.getElementById('userIdTextInput').value;
+  var userAge = document.getElementById('userAgeTextInput').value;
+  var userName = document.getElementById('userNameTextInput').value;
+  var userCity = document.getElementById('userCityTextInput').value;
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() 
+  {
+    if (this.readyState == 4 && this.status == 200) 
+    {
+      document.getElementById("user").innerHTML = xhttp.responseText;
+    }
+  };
+  xhttp.open("POST", 'http://localhost:7072', true);
+  xhttp.send("{\"ID\": " + userId + ",\"Name\": " + userName + ",\"Age\": " + userAge + ",\"City\": " + userCity + "}");
 }
 
 
