@@ -15,9 +15,9 @@ cgitb.enable()
 class UserStyle:
 
     def __init__(self, user_dict):
-        self.id = user_dict["ID"]
+        self.id = int(user_dict["ID"])
         self.name = user_dict["Name"]
-        self.age = user_dict["Age"]
+        self.age = int(user_dict["Age"])
         self.city = user_dict["City"]
 
 def AddUser(user_dict):
