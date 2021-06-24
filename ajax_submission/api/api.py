@@ -7,8 +7,33 @@ import cgitb
 import cgi
 import cgitb
 from sys import platform
+import mysql.connector
+
 cgitb.enable()
 
+
+class UserStyle:
+
+    def __init__(self, user_dict):
+        self.id = user_dict["ID"]
+        self.name = user_dict["Name"]
+        self.age = user_dict["Age"]
+        self.city = user_dict["City"]
+
+def AddUser(user_dict):
+
+    new_user = UserStyle(user_dict)
+    return new_user
+
+def ConnectSqlServer():
+
+    conn = mysql.connector.connect(
+        host="localhost",
+        user="root",
+        password="",
+        database="top")
+    curs = conn.cursor()
+    return conn, curs
 
 class AtousaHttpRequestHandler(http.server.SimpleHTTPRequestHandler):
 
@@ -76,12 +101,23 @@ class AtousaHttpRequestHandler(http.server.SimpleHTTPRequestHandler):
 
         if target == '/user':
 
-            new_user = {}
-            new_user_data = {}
-            for key in data_dict.keys():
-                if key in ['Name', 'Age', 'City']:
-                    new_user_data[key] = data_dict[key]
-            new_user[str(data_dict['ID'])] = new_user_data
+            ## without using classes
+            '''
+            # new_user = {}
+            # new_user_data = {}
+            # for key in data_dict.keys():
+            #     if key in ['Name', 'Age', 'City']:
+            #         new_user_data[key] = data_dict[key]
+            # new_user[str(data_dict['ID'])] = new_user_data
+            '''
+
+            ## using classes
+            new_user = AddUser(data_dict)
+            conn, curs = ConnectSqlServer()
+            sql_query = "INSERT INTO top(ID, Name, Age, City) VALUES(%d, %s, %d, %s);"
+            curs.execute(sql_query, (new_user.id, new_user.name, new_user.age, new_user.city))
+            curs.close()
+            conn.close()
 
             if platform.startswith("linux"):
                 jsonFilePath = os.getcwd() + "/ajax_submission/api/files/data.json"
@@ -95,7 +131,7 @@ class AtousaHttpRequestHandler(http.server.SimpleHTTPRequestHandler):
                 jsonSrc_str.seek(0)
                 json.dump(jsonSrc, jsonSrc_str, indent=4)
 
-            dispMsg = "User {} is Added to database.".format(new_user_data['Name'])
+            dispMsg = "User {} is Added to database.".format(new_user.name)
             self.wfile.write(bytes(dispMsg, "utf8"))
 
         else:
