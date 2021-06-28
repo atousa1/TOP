@@ -7,8 +7,39 @@ import cgitb
 import cgi
 import cgitb
 from sys import platform
+import mysql.connector
+
 cgitb.enable()
 
+
+class User:
+
+    def __init__(self, inp_id, inp_name, inp_age, inp_city):
+        self.id = inp_id
+        self.name = inp_name
+        self.age = inp_age
+        self.city = inp_city
+
+def UserParser(data_str):
+
+    user_dict = json.loads(data_str)
+
+    id = user_dict["ID"]
+    name = user_dict["Name"]
+    age = user_dict["Age"]
+    city = user_dict["City"]
+    new_user = User(id, name, age, city)
+    return new_user
+
+def ConnectSqlServer():
+
+    conn = mysql.connector.connect(
+        host="localhost",
+        user="root",
+        password="",
+        database="top")
+    curs = conn.cursor()
+    return conn, curs
 
 class AtousaHttpRequestHandler(http.server.SimpleHTTPRequestHandler):
 
@@ -66,42 +97,50 @@ class AtousaHttpRequestHandler(http.server.SimpleHTTPRequestHandler):
 
         data_byte = self.rfile.read(int(self.headers['Content-Length']))
 
-        self.end_headers()
-
-        data_str = data_byte.decode("utf-8")
-        data_dict = json.loads(data_str)
-        
+        self.end_headers()        
         
         target = self.path
 
         if target == '/user':
 
-            new_user = {}
-            new_user_data = {}
-            for key in data_dict.keys():
-                if key in ['Name', 'Age', 'City']:
-                    new_user_data[key] = data_dict[key]
-            new_user[str(data_dict['ID'])] = new_user_data
+            ## without using classes
+            '''
+            # new_user = {}
+            # new_user_data = {}
+            # for key in data_dict.keys():
+            #     if key in ['Name', 'Age', 'City']:
+            #         new_user_data[key] = data_dict[key]
+            # new_user[str(data_dict['ID'])] = new_user_data
+            '''
 
-            if platform.startswith("linux"):
-                jsonFilePath = os.getcwd() + "/ajax_submission/api/files/data.json"
-            elif platform.startswith("win32"):
-                jsonFilePath = os.getcwd() + "/files/data.json"
+            ## using classes
+            data_str = data_byte.decode("utf-8")
+            new_user = UserParser(data_str)
+            conn, curs = ConnectSqlServer()
+            sql_query = "INSERT INTO usersregisteration(ID, Name, Age, City) VALUES(%s, %s, %s, %s);"
+            curs.execute(sql_query, (new_user.id, new_user.name, new_user.age, new_user.city))
+            conn.commit()
+            curs.close()
+            conn.close()
 
-            with open(jsonFilePath, 'r+') as jsonSrc_str:
+            # if platform.startswith("linux"):
+            #     jsonFilePath = os.getcwd() + "/ajax_submission/api/files/data.json"
+            # elif platform.startswith("win32"):
+            #     jsonFilePath = os.getcwd() + "/files/data.json"
 
-                jsonSrc = json.load(jsonSrc_str)
-                jsonSrc.update(new_user)
-                jsonSrc_str.seek(0)
-                json.dump(jsonSrc, jsonSrc_str, indent=4)
+            # with open(jsonFilePath, 'r+') as jsonSrc_str:
 
-            dispMsg = "User {} is Added to database.".format(new_user_data['Name'])
-            self.wfile.write(bytes(dispMsg, "utf8"))
+            #     jsonSrc = json.load(jsonSrc_str)
+            #     jsonSrc.update(new_user)
+            #     jsonSrc_str.seek(0)
+            #     json.dump(jsonSrc, jsonSrc_str, indent=4)
+
+            html = "User {} is Added to database.".format(new_user.name)
 
         else:
 
             html = f"<html><head></head><body><h1>Atousa does not know what to do with your POST request :) </h1></body></html>"
-
+        
         self.wfile.write(bytes(html, "utf8"))
 
         return
