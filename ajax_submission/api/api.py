@@ -122,7 +122,7 @@ class AtousaHttpRequestHandler(http.server.SimpleHTTPRequestHandler):
             # conn.commit()
             msg = curs.fetchall()
 
-            if len(msg):
+            if len(msg)!=0:
                 add_user_flag = False
                 html = "This National ID is registered before."
             else:
