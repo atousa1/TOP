@@ -186,7 +186,7 @@ function addUser() {
     }
   };
   xhttp.open("POST", 'http://localhost:7072/user', true);
-  xhttp.send("{\"ID\": " + userId + ",\"Name\": " + "\""+userName+"\"" + ",\"Age\": " + userAge + ",\"City\": " + "\""+userCity+"\"" + "}");
+  xhttp.send("{\"National_ID\": " + userId + ",\"Name\": " + "\""+userName+"\"" + ",\"Age\": " + userAge + ",\"City\": " + "\""+userCity+"\"" + "}");
 }
 
 

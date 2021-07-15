@@ -23,12 +23,11 @@ class User:
 def UserParser(data_str):
 
     user_dict = json.loads(data_str)
-
-    id = user_dict["ID"]
+    nat_id = user_dict["National_ID"]
     name = user_dict["Name"]
     age = user_dict["Age"]
     city = user_dict["City"]
-    new_user = User(id, name, age, city)
+    new_user = User(nat_id, name, age, city)
     return new_user
 
 def ConnectSqlServer():
@@ -117,25 +116,38 @@ class AtousaHttpRequestHandler(http.server.SimpleHTTPRequestHandler):
             data_str = data_byte.decode("utf-8")
             new_user = UserParser(data_str)
             conn, curs = ConnectSqlServer()
-            sql_query = "INSERT INTO usersregisteration(ID, Name, Age, City) VALUES(%s, %s, %s, %s);"
-            curs.execute(sql_query, (new_user.id, new_user.name, new_user.age, new_user.city))
-            conn.commit()
-            curs.close()
-            conn.close()
 
-            # if platform.startswith("linux"):
-            #     jsonFilePath = os.getcwd() + "/ajax_submission/api/files/data.json"
-            # elif platform.startswith("win32"):
-            #     jsonFilePath = os.getcwd() + "/files/data.json"
+            sql = "SELECT * FROM usersregisteration WHERE National_ID='%s'"
+            curs.execute(sql, new_user.id)
+            # conn.commit()
+            msg = curs.fetchall()
 
-            # with open(jsonFilePath, 'r+') as jsonSrc_str:
+            if len(msg):
+                add_user_flag = False
+                html = "This National ID is registered before."
+            else:
+                add_user_flag = True
 
-            #     jsonSrc = json.load(jsonSrc_str)
-            #     jsonSrc.update(new_user)
-            #     jsonSrc_str.seek(0)
-            #     json.dump(jsonSrc, jsonSrc_str, indent=4)
+            if add_user_flag:
+                sql_query = "INSERT INTO usersregisteration(National_ID, Name, Age, City) VALUES(%s, %s, %s, %s);"
+                curs.execute(sql_query, (new_user.id, new_user.name, new_user.age, new_user.city))
+                conn.commit()
+                curs.close()
+                conn.close()
 
-            html = "User {} is Added to database.".format(new_user.name)
+                # if platform.startswith("linux"):
+                #     jsonFilePath = os.getcwd() + "/ajax_submission/api/files/data.json"
+                # elif platform.startswith("win32"):
+                #     jsonFilePath = os.getcwd() + "/files/data.json"
+
+                # with open(jsonFilePath, 'r+') as jsonSrc_str:
+
+                #     jsonSrc = json.load(jsonSrc_str)
+                #     jsonSrc.update(new_user)
+                #     jsonSrc_str.seek(0)
+                #     json.dump(jsonSrc, jsonSrc_str, indent=4)
+
+                html = "User {} is added to database.".format(new_user.name)
 
         else:
 
