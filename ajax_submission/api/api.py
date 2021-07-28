@@ -40,6 +40,31 @@ def ConnectSqlServer():
     curs = conn.cursor()
     return conn, curs
 
+def TableDrawer(conn, curs):
+    
+    conn, curs = ConnectSqlServer()
+
+    sql = "SELECT * FROM usersregisteration"
+    curs.execute(sql)
+    # conn.commit()
+
+    html = "<style> table, th, td { border: 1px solid black; }</style> <table>   <tr> <th>ID</th> <th>National ID</th> <th>Name</th> <th>Age</th> <th>City</th> </tr>"
+    row = curs.fetchone()
+    if row is not None:
+        while row is not None:
+            print(row)
+            table_row = "<tr><td>" + str(row[0]) + "</td><td>" + str(row[1]) + "</td><td>"+ str(row[2]) + "</td><td>"+ str(row[3]) + "</td><td>"+ str(row[4]) + "</td></tr>"
+            html += table_row
+            row = curs.fetchone()
+        html += "</table>"
+
+    elif row is None:
+        html = "This National ID is registered before."
+
+    curs.close()
+    conn.close()
+    return html
+
 class AtousaHttpRequestHandler(http.server.SimpleHTTPRequestHandler):
 
     def do_GET(self):
@@ -54,19 +79,41 @@ class AtousaHttpRequestHandler(http.server.SimpleHTTPRequestHandler):
         target = self.path
         pattern = r'^/user/\d+$'
         
-        if platform.startswith("linux"):
-            filepath = os.getcwd() + "/ajax_submission/api/files/data.json"
-        elif platform.startswith("win32"):
-            filepath = os.getcwd() + "/files/data.json"
+
 
         if target == '/users':
-            
+            if platform.startswith("linux"):
+                filepath = os.getcwd() + "/ajax_submission/api/files/data.json"
+            elif platform.startswith("win32"):
+                filepath = os.getcwd() + "/files/data.json"
             with open(filepath, 'rb') as json_str:                
                 self.copyfile(json_str, self.wfile)
             return
 
-        elif re.match(pattern, target):
+        elif target == '/user':
 
+            # if platform.startswith("linux"):
+            #     htmlFilePath = os.getcwd() + "/ajax_submission/webserver_html_simple/user.html"
+            # elif platform.startswith("win32"):
+            htmlFilePath = os.getcwd() + "/ajax_submission/webserver_html_simple/user.html" #TODO
+
+            with open(htmlFilePath, 'rb') as fin:
+                self.copyfile(fin, self.wfile)
+            return
+
+        elif target == '/usersd':
+
+            conn, curs = ConnectSqlServer()
+            html = TableDrawer(conn, curs)
+            self.wfile.write(bytes(html, "utf8"))
+            
+            return 
+            
+        elif re.match(pattern, target):
+            if platform.startswith("linux"):
+                filepath = os.getcwd() + "/ajax_submission/api/files/data.json"
+            elif platform.startswith("win32"):
+                filepath = os.getcwd() + "/files/data.json"
             user_id = target.split("/")[-1]
             with open(filepath, 'r') as json_str: 
 
@@ -117,8 +164,8 @@ class AtousaHttpRequestHandler(http.server.SimpleHTTPRequestHandler):
             new_user = UserParser(data_str)
             conn, curs = ConnectSqlServer()
 
-            sql = "SELECT * FROM usersregisteration WHERE National_ID='%s'"
-            curs.execute(sql, new_user.id)
+            sql = "SELECT * FROM usersregisteration WHERE National_ID='"+str(new_user.id)+"'"
+            curs.execute(sql)
             # conn.commit()
             msg = curs.fetchall()
 

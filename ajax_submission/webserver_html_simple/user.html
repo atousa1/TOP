@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+
+<body>
+
+<style>
+header {
+  background-color: rgb(38, 255, 49);
+  padding: 30px;
+  text-align: center;
+  font-size: 35px;
+  color: rgb(0, 0, 0);
+}
+
+nav {
+  float: left;
+  width: 47%;
+  text-align: center;
+  background: rgb(121, 231, 154);
+  padding: 20px;
+}
+</style>
+
+<header>
+  <h2>Database Work</h2>
+</header>
+
+<nav>
+<div>
+    <h2>Export All Users From Database</h2>
+    <button type="button" onclick="getUsersd()">GET IT!</button>
+    <div id="users"></div>
+</div>
+</nav>
+
+<nav>
+<div>
+    <h2>Add User to Database</h2>
+    <h2>National ID</h2>
+    <input type="text" id="userIdTextInput">
+    <h2>Age</h2>
+    <input type="text" id="userAgeTextInput">
+    <h2>Name</h2>
+    <input type="text" id="userNameTextInput">
+    <h2>City</h2>
+    <input type="text" id="userCityTextInput">
+    <br />
+    <button type="button" onclick="addUser()">ADD IT!</button>
+</div>
+</nav>
+
+<script>
+window.onload=function(){
+  document.addEventListener('DOMContentLoaded', function () {
+    const form = document.getElementById('user_id').querySelector('id_form');
+        form.addEventListener('button', function(event) 
+        {
+            event.preventDefault();
+
+            var usid = form.querySelector("input[name = 'uid']");
+        });
+      });
+};
+
+
+
+
+function getUsersd() {
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() 
+  {
+    if (this.readyState == 4 && this.status == 200) 
+    {
+      document.getElementById("users").innerHTML = xhttp.responseText;
+    }
+  };
+  xhttp.open("GET", 'http://localhost:7072/usersd', true);
+  xhttp.send();
+}
+
+function addUser() {
+  var userId = document.getElementById('userIdTextInput').value;
+  var userAge = document.getElementById('userAgeTextInput').value;
+  var userName = document.getElementById('userNameTextInput').value;
+  var userCity = document.getElementById('userCityTextInput').value;
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() 
+  {
+    if (this.readyState == 4 && this.status == 200) 
+    {
+      document.getElementById("user").innerHTML = xhttp.responseText;
+    }
+  };
+  xhttp.open("POST", 'http://localhost:7072/user', true);
+  xhttp.send("{\"National_ID\": " + userId + ",\"Name\": " + "\""+userName+"\"" + ",\"Age\": " + userAge + ",\"City\": " + "\""+userCity+"\"" + "}");
+}
+
+
+</script>
+
+</body>
+</html>

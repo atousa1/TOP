@@ -29,7 +29,7 @@ nav {
 
 <nav>
 <div>
-    <h2>Export All Users</h2>
+    <h2>Export All Users From Json File</h2>
     <button type="button" onclick="getUsers()">GET IT!</button>
     <div id="users"></div>
 </div>
@@ -37,16 +37,24 @@ nav {
 
 <nav>
   <div id="user_id">
-      <h2>Export Specific User</h2>
+      <h2>Export Specific User From Json File</h2>
       <input type="text" id="userIdInput">
       <button type="button" onclick="getUser()">GET IT!</button>
       <div id="user"></div>
   </div>
 </nav>
 
+<!-- <nav>
+  <div>
+      <h2>Database Work</h2>
+      <button type="button" onclick="gotoDatabase()">Go!</button>
+      <div id="userd"></div>
+  </div>
+</nav> -->
+
 <nav>
 <div>
-    <h2>Import User</h2>
+    <h2>Insert User into Database</h2>
     <h2>ID</h2>
     <input type="text" id="userIdTextInput">
     <h2>Age</h2>
@@ -72,78 +80,78 @@ window.onload=function(){
         });
       });
 };
-function loadDoc(url, cFunction) {
-  var xhttp;
-  xhttp=new XMLHttpRequest();
-  xhttp.onreadystatechange = function() {
-    if (this.readyState == 4 && this.status == 200) 
-    {
-      cFunction(this);
-    }
-  };
-  xhttp.open("GET", url, true);
-  xhttp.send();
-}
+// function loadDoc(url, cFunction) {
+//   var xhttp;
+//   xhttp=new XMLHttpRequest();
+//   xhttp.onreadystatechange = function() {
+//     if (this.readyState == 4 && this.status == 200) 
+//     {
+//       cFunction(this);
+//     }
+//   };
+//   xhttp.open("GET", url, true);
+//   xhttp.send();
+// }
 
-function callAPI(api, user_flag) {
-  var xhttp;
-  var id;
-  id = api;
-  xhttp=new XMLHttpRequest();
-  xhttp.onreadystatechange = function() 
-  {
-    if (this.readyState == 4 && this.status == 200) 
-    {
-      apiFunction(this, id);
-    }
-  };
+// function callAPI(api, user_flag) {
+//   var xhttp;
+//   var id;
+//   id = api;
+//   xhttp=new XMLHttpRequest();
+//   xhttp.onreadystatechange = function() 
+//   {
+//     if (this.readyState == 4 && this.status == 200) 
+//     {
+//       apiFunction(this, id);
+//     }
+//   };
   
-  if (user_flag)
-  {
-    var url = "http://localhost:7072/user/"+1;
-  }
-  else
-  {
-    var url = "http://localhost:7072/"+api;
-  }
+//   if (user_flag)
+//   {
+//     var url = "http://localhost:7072/user/"+1;
+//   }
+//   else
+//   {
+//     var url = "http://localhost:7072/"+api;
+//   }
   
 
-  // if (api == "users") 
-  // {
-  //   xhttp.open("GET", url, true);
-  // }
-  if (api == "user")
-  {
-    xhttp.open("POST", url, true);
-  }
-  else
-  {
-    xhttp.open("GET", url, true);
-  }
-  xhttp.send();
-}
+//   // if (api == "users") 
+//   // {
+//   //   xhttp.open("GET", url, true);
+//   // }
+//   if (api == "user")
+//   {
+//     xhttp.open("POST", url, true);
+//   }
+//   else
+//   {
+//     xhttp.open("GET", url, true);
+//   }
+//   xhttp.send();
+// }
 
-function apiFunction(xhttp, id) 
-{
-  console.log(xhttp);
-  document.getElementById(id).innerHTML = xhttp.responseText;
-    // document.getElementById(id).innerHTML = "<html><head></head><body><h1>Get ALL Users</h1></body></html>";
+// function apiFunction(xhttp, id) 
+// {
+//   console.log(xhttp);
+//   document.getElementById(id).innerHTML = xhttp.responseText;
+//     // document.getElementById(id).innerHTML = "<html><head></head><body><h1>Get ALL Users</h1></body></html>";
 
-}
+// }
 
-function docFunction(xhttp) 
-{
-    // var arr = JSON.parse('{"result":true, "count":42}');
-    var arr = xhttp.responseText;
-    var out = "";
-    var i;
-    // for(i = 0; i < arr.length; i++) 
-    // {
-        // out += '<a href="' + arr[i].url + '">' + arr[i].display + '</a><br>';
-    out += '<h1>'+arr+'</h1>';
-    // }
-    document.getElementById("main").innerHTML = out
-}
+// function docFunction(xhttp) 
+// {
+//     // var arr = JSON.parse('{"result":true, "count":42}');
+//     var arr = xhttp.responseText;
+//     var out = "";
+//     var i;
+//     // for(i = 0; i < arr.length; i++) 
+//     // {
+//         // out += '<a href="' + arr[i].url + '">' + arr[i].display + '</a><br>';
+//     out += '<h1>'+arr+'</h1>';
+//     // }
+//     document.getElementById("main").innerHTML = out
+// }
 
 function getUsers() {
   var xhttp = new XMLHttpRequest();
@@ -188,6 +196,19 @@ function addUser() {
   xhttp.open("POST", 'http://localhost:7072/user', true);
   xhttp.send("{\"National_ID\": " + userId + ",\"Name\": " + "\""+userName+"\"" + ",\"Age\": " + userAge + ",\"City\": " + "\""+userCity+"\"" + "}");
 }
+
+// function gotoDatabase() {
+//   var xhttp = new XMLHttpRequest();
+//   xhttp.onreadystatechange = function() 
+//   {
+//     if (this.readyState == 4 && this.status == 200) 
+//     {
+//       document.getElementById("userd").innerHTML = xhttp.responseText;
+//     }
+//   };
+//   xhttp.open("GET", 'http://localhost:7072/user', true);
+//   xhttp.send();
+// }
 
 
 </script>
