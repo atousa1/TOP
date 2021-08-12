@@ -14,18 +14,19 @@ class AtousaHttpRequestHandler(http.server.SimpleHTTPRequestHandler):
         
         self.end_headers()
         target = self.path
+        pattern_file = r'^/[\w+]\.[\w+]$'
+        pattern_folder = r'^/[\w+]/[\w+]\.[\w+]$'
 
-        if target == '/user':
+        if re.match(pattern_file, target):
 
             # if platform.startswith("linux"):
             #     htmlFilePath = os.getcwd() + "/ajax_submission/webserver_html_simple/user.html"
             # elif platform.startswith("win32"):
-            htmlFilePath = os.getcwd() + "/ajax_submission/webserver_html_simple/user.html" #TODO
+            htmlFilePath = os.getcwd() + "/ajax_submission/webserver_html_simple"+target #TODO
 
             with open(htmlFilePath, 'rb') as fin:
                 self.copyfile(fin, self.wfile)
             return
-        
         else:
             if platform.startswith("linux"):
                 htmlFilePath = os.getcwd() + "/ajax_submission/webserver_html_simple/index.html"

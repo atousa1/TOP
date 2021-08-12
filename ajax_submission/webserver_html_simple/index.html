@@ -44,13 +44,13 @@ nav {
   </div>
 </nav>
 
-<!-- <nav>
+<nav>
   <div>
       <h2>Database Work</h2>
       <button type="button" onclick="gotoDatabase()">Go!</button>
       <div id="userd"></div>
   </div>
-</nav> -->
+</nav>
 
 <nav>
 <div>
@@ -197,18 +197,19 @@ function addUser() {
   xhttp.send("{\"National_ID\": " + userId + ",\"Name\": " + "\""+userName+"\"" + ",\"Age\": " + userAge + ",\"City\": " + "\""+userCity+"\"" + "}");
 }
 
-// function gotoDatabase() {
-//   var xhttp = new XMLHttpRequest();
-//   xhttp.onreadystatechange = function() 
-//   {
-//     if (this.readyState == 4 && this.status == 200) 
-//     {
-//       document.getElementById("userd").innerHTML = xhttp.responseText;
-//     }
-//   };
-//   xhttp.open("GET", 'http://localhost:7072/user', true);
-//   xhttp.send();
-// }
+function gotoDatabase() {
+  window.location.href="user.html";
+  // var xhttp = new XMLHttpRequest();
+  // xhttp.onreadystatechange = function() 
+  // {
+  //   if (this.readyState == 4 && this.status == 200) 
+  //   {
+  //     document.getElementById("userd").innerHTML = xhttp.responseText;
+  //   }
+  // };
+  // xhttp.open("GET", 'http://localhost:9092/user', true);
+  // xhttp.send();
+}
 
 
 </script>
